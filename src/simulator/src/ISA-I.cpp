@@ -1,5 +1,5 @@
 #include "../include/simulator.hpp"
-#include "../include/defs.hpp"
+#include "../../include/defs.hpp"
 
 using namespace std;
 
@@ -34,7 +34,7 @@ void Simulator::addi()
 		debug << "!!!!! Overflow !!!!!" << endl;
 		debug << "addi: " << "$" << +i_rd << " = $" << +i_rs << " + " << immediate << endl;
 		debug << dec << "DEC " << (int32_t) reg[i_rd] << " = " << src << " + " << immediate << endl;
-		if (LOG_DEBUG) getlogs();
+		// if (LOG_DEBUG) getlogs();
         exit(ARITHMETIC_EXCEPTION);
     }
     

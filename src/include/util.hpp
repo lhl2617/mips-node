@@ -6,6 +6,8 @@
 #include <vector>
 #include <sstream>
 
+#include "simulator/include/simulator.hpp"
+
 using namespace std;
 
 struct retException

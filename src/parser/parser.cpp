@@ -9,6 +9,7 @@
 #include "instructionList.hpp"
 #include "../include/parserSimulatorAPI.hpp"
 #include "../include/util.hpp"
+#include "../include/defs.hpp"
 
 std::unordered_map<std::string, numFn> commMap = {
     {"add", {3, add}},
@@ -107,7 +108,7 @@ void pushInVec(ParsedLines &commVector, std::vector<std::string> &inVec, unsigne
 /// parse an incoming string into a vector of ParsedLines
 void parseLines(std::istream &inStream, ParsedLines &commVector)
 {
-    unsigned int count = 0x10000000;
+    unsigned int count = ADDR_INSTR;
     unsigned int lineNo = 0;
     std::string lineStr;
     std::string func;

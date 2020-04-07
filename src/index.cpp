@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "main.hpp"
+#include "include/util.hpp"
 
 Napi::Array formatMIPS(const Napi::CallbackInfo &info)
 {

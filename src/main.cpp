@@ -33,3 +33,4 @@ std::vector<CompiledSimInput> compileSim(const std::string &rawCode)
     parseLines(stream, ps);
     return compileForSimulator(ps);
 }
+

@@ -1,4 +1,4 @@
-#include "../include/defs.hpp"
+#include "../../include/defs.hpp"
 #include "../include/simulator.hpp"
 
 using namespace std;
@@ -86,7 +86,7 @@ void Simulator::call_r(uint8_t param) {
 			break;
 		default:
 			cerr << "R type function not available." << endl;
-			if (LOG_DEBUG) getlogs();
+			// if (LOG_DEBUG) getlogs();
 			exit(INVALID_INSTRUCTION);	
 			break;
 	}
@@ -168,7 +168,7 @@ void Simulator::call_i(uint8_t param) {
 			break;
 		default:
 			cerr << "I type function not available." << endl;
-			if (LOG_DEBUG) getlogs();
+			// if (LOG_DEBUG) getlogs();
 			exit(INVALID_INSTRUCTION);	
 			break;
 	}
@@ -191,7 +191,7 @@ void Simulator::call_cond_B() {
 			break;
 		default:
 			cerr << "I type function not available." << endl;
-			if (LOG_DEBUG) getlogs();
+			// if (LOG_DEBUG) getlogs();
 			exit(INVALID_INSTRUCTION);	
 			break;
 	}
@@ -208,7 +208,7 @@ void Simulator::call_j(uint8_t param) {
 			break;
 		default:
 			cerr << "J type function not available." << endl;
-			if (LOG_DEBUG) getlogs();
+			// if (LOG_DEBUG) getlogs();
 			exit(INVALID_INSTRUCTION);	
 			break;
 	}

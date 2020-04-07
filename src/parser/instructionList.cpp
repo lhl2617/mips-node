@@ -5,6 +5,7 @@
 #include <string>
 #include "parser.hpp"
 #include "../include/util.hpp"
+#include "../../include/defs.hpp"
 
 std::map<std::string, uint32_t> regMap = {
     {"$zero", 0},
@@ -157,7 +158,7 @@ uint32_t I_TYPE(std::vector<std::string> &argVec, const std::vector<OP_TYPE> &op
         case imm:
             if (branch && labelReturn(argVec[i + 1], immediate))
             {
-                immediate = immediate - ((pc + 1) * 4 + 0x10000000);
+                immediate = immediate - ((pc + 1) * 4 + ADDR_INSTR);
                 immediate = immediate >> 2;
             }
             else
