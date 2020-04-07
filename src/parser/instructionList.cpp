@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include "parser.hpp"
+#include "../include/util.hpp"
 
 std::map<std::string, uint32_t> regMap = {
     {"$zero", 0},
@@ -70,14 +71,6 @@ std::map<std::string, uint32_t> regMap = {
     {"$29", 29},
     {"$30", 30},
     {"$31", 31}};
-
-void exitError(std::string err, int line, int code)
-{
-    // std::cerr << errMsg << std::endl << std::endl;
-    // std::exit(code);
-    std::string errMsg = to_string(line) + " ----- " + err;
-    throw retException({code, errMsg});
-}
 
 std::string giveStr(std::vector<std::string> strVec)
 {

@@ -1,0 +1,1 @@
+declare function format(rawCode: string): string[];

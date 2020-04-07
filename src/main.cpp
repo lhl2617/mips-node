@@ -3,33 +3,33 @@
 #include <string>
 #include <sstream>
 
-#include "parser.hpp"
+#include "parser/parser.hpp"
 #include "main.hpp"
-
-std::istringstream getCodeStream(const std::string &rawCode)
-{
-    std::istringstream out(rawCode);
-    return out;
-}
-
-std::vector<std::vector<std::string>> getCommVector(const std::string &rawCode)
-{
-    std::istringstream codeStream = getCodeStream(rawCode);
-    std::vector<std::vector<std::string>> commVector;
-    vecParser(codeStream, commVector, false);
-    return commVector;
-}
+#include "include/util.hpp"
+#include "include/parserSimulatorAPI.hpp"
 
 /// entry: format
 std::vector<std::string> format(const std::string &rawCode)
 {
-    auto commVector = getCommVector(rawCode);
-    return formatterGen(commVector);
+    auto stream = stringToStream(rawCode);
+    ParsedLines ps;
+    parseLines(stream, ps);
+    return formatParsedLines(ps);
 }
 
 /// entry: parse
-std::vector<uint32_t> parse(const std::string &rawCode)
+std::vector<uint32_t> compile(const std::string &rawCode)
 {
-    auto commVector = getCommVector(rawCode);
-    return binGenVector(commVector);
+    auto stream = stringToStream(rawCode);
+    ParsedLines ps;
+    parseLines(stream, ps);
+    return compileParsedLines(ps);
+}
+
+std::vector<CompiledSimInput> compileSim(const std::string &rawCode)
+{
+    auto stream = stringToStream(rawCode);
+    ParsedLines ps;
+    parseLines(stream, ps);
+    return compileForSimulator(ps);
 }

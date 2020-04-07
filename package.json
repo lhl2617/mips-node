@@ -1,7 +1,7 @@
 {
-  "name": "mips-parser-node",
+  "name": "mips-node",
   "version": "1.0.0",
-  "description": "MIPS Parser",
+  "description": "MIPS Emulator (C++) as NPM module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,5 +16,8 @@
   "dependencies": {
     "bindings": "^1.5.0",
     "node-addon-api": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.11.0"
   }
 }
