@@ -25,14 +25,7 @@ Simulator::Simulator(const vector<CompiledSimInput> &v)
 
 Simulator::Simulator(const RunInfo &ri)
 {
-    memory = ri.memory;
-    reg = ri.reg;
-    regHI = ri.regHI;
-    regLO = ri.regLO;
-    pc = ri.pc;
-    stepsDone = ri.stepsDone;
-    history = ri.history;
-    lineMap = ri.lineMap;
+    assignRunInfo(ri);
 }
 
 void Simulator::run_inst()
@@ -105,26 +98,52 @@ void Simulator::updateHistory()
 
 RunInfo Simulator::toRunInfo() const
 {
-    return {
+    RunInfo r = {
         memory,
         reg,
         regHI,
         regLO,
         pc,
         stepsDone,
-        history};
+        history,
+        lineMap,
+        runErr};
+    return r;
 }
 
-RunInfo Simulator::stepFwd()
+void Simulator::assignRunInfo(const RunInfo &ri)
 {
-    if (pc == ADDR_NULL)
+    memory = ri.memory;
+    reg = ri.reg;
+    regHI = ri.regHI;
+    regLO = ri.regLO;
+    pc = ri.pc;
+    stepsDone = ri.stepsDone;
+    history = ri.history;
+    lineMap = ri.lineMap;
+}
+
+void Simulator::stepFwdBy(const uint32_t &steps)
+{
+    uint32_t target = stepsDone + steps;
+    while (stepsDone < target && pc != ADDR_NULL && !runErr.error)
+    {
+        stepFwd(target);
+    }
+}
+
+void Simulator::stepFwd(const uint32_t &target)
+{
+    if (pc == ADDR_NULL || runErr.error)
     {
         // do nothing
     }
     else
     {
-        // save to history
-        updateHistory();
+        // save to history if within history length of target, if target known 
+        // if target == 0 then save history
+        if (!target || target - stepsDone <= SIMULATOR_HISTORY_MAX_LENGTH)
+            updateHistory();
         ++stepsDone;
 
         curr_inst = memory.read_instr(pc);
@@ -147,25 +166,24 @@ RunInfo Simulator::stepFwd()
             pc += 4;
         }
     }
-    return toRunInfo();
 }
 
-RunInfo Simulator::stepBwd()
+void Simulator::stepBwd()
 {
     if (history.size())
     {
         auto ret = history.front();
         history.pop_front();
-        return ret;
+        assignRunInfo(ret);
     }
     else
     {
         // we need to run code until stepsDone - 1
-        uint32_t targetSteps = stepsDone - 1;
+        uint32_t target = stepsDone - 1;
         reset();
-        while (stepsDone <= targetSteps)
+        while (stepsDone <= target)
         {
-            stepFwd();
+            stepFwd(target);
         }
     }
 }
@@ -179,6 +197,8 @@ void Simulator::reset() {
     stepsDone = 0;
     history.clear();
     lineMap.clear();
+    RunErr r; 
+    runErr = r;
 }
 
 // RunInfo Simulator::run()

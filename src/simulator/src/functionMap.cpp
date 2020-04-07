@@ -85,9 +85,7 @@ void Simulator::call_r(uint8_t param) {
 			bitwise_xor();
 			break;
 		default:
-			cerr << "R type function not available." << endl;
-			// if (LOG_DEBUG) getlogs();
-			exit(INVALID_INSTRUCTION);	
+            handleError(INVALID_INSTRUCTION, "R type function not available.");
 			break;
 	}
 	return;

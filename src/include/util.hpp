@@ -16,6 +16,7 @@ struct retException
     std::string msg;
 };
 
+// for parser and formatter part
 void exitError(std::string err, int line, int code)
 {
     // std::cerr << errMsg << std::endl << std::endl;

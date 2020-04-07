@@ -11,8 +11,8 @@
 
 using namespace std;
 
-int SIMULATOR_HISTORY_MAX_LENGTH = 10;
-
+uint32_t SIMULATOR_HISTORY_MAX_LENGTH = 10;
+uint32_t MAX_RUN_STEPS = 5000;
 struct RunErr
 {
     bool error = false;
@@ -54,6 +54,7 @@ private:
     list<RunInfo> history;
     // this maps from PC-ADDR_INSTR to the line number
     vector<uint32_t> lineMap;
+    RunErr runErr;
 
 
     uint32_t instr_idx; // idx of first byte of instruction in byte_inst
@@ -84,17 +85,19 @@ private:
     uint32_t debugsrc;
     uint32_t debugsrc1;
     uint32_t debugsrc2;
-    // run to End
-    // RunInfo run();
-    // step front 
-    RunInfo stepFwd();
+    // run from x steps from current stepsDone
+    void stepFwdBy(const uint32_t &steps = MAX_RUN_STEPS);
+    // step front - target is only used to optimise updateHistory
+    void stepFwd(const uint32_t &target = 0);
     // step back
-    RunInfo stepBwd();
+    void stepBwd();
     // return currentInfo
     RunInfo toRunInfo() const;
+    void assignRunInfo(const RunInfo &ri);
 
     void updateHistory();
     void reset();
+    void handleError(const uint32_t &code, const std::string &msg);
 
     void read_inst(); // read next instruction into curr_inst
     void run_inst();  // decode curr_inst and run instruction
