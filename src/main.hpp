@@ -17,4 +17,5 @@ std::vector<uint32_t> compile(const std::string &rawCode);
 // test
 RunInfo getRunInfo(const std::string &rawCode);
 
+std::string testBoost(const std::string &rawCode);
 #endif

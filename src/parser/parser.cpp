@@ -100,7 +100,7 @@ void pushInVec(ParsedLines &commVector, std::vector<std::string> &inVec, unsigne
         }
     }
 
-    ParsedLine p = { inVec, lineNo };
+    ParsedLine p = {inVec, lineNo};
     commVector.push_back(p);
     count += 4;
 }
@@ -121,7 +121,7 @@ void parseLines(std::istream &inStream, ParsedLines &commVector)
         else if (func[0] == '#')
         {
             // whole line is a comment
-            ParsedLine p = { {"", "# " + func.substr(1) + trim(line.str())}, lineNo, true };
+            ParsedLine p = {{"", trim(line.str())}, lineNo, true};
             commVector.push_back(p);
         }
         else if (func.back() == ':')
@@ -224,7 +224,7 @@ std::vector<CompiledSimInput> compileForSimulator(ParsedLines &commVector)
         {
             uint32_t instr = commMap[x.comm[0]].fn(x.comm, i);
 
-            out.push_back({ instr, x.lineNo });
+            out.push_back({instr, x.lineNo});
         }
     }
     return out;

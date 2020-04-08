@@ -9,14 +9,18 @@
 #include "memory.hpp"
 #include "../../include/parserSimulatorAPI.hpp"
 #include "../../include/util.hpp"
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 
 using namespace std;
 
 // extern uint32_t SIMULATOR_HISTORY_MAX_LENGTH;
 // extern uint32_t MAX_RUN_STEPS;
 
-struct RunInfo
+class RunInfo
 {
+public:
     Memory memory;
     vector<uint32_t> reg;
     uint32_t regHI;
@@ -27,6 +31,19 @@ struct RunInfo
     vector<uint32_t> lineMap;
     RunErr runErr;
 };
+
+namespace boost
+{
+namespace serialization
+{
+template <class Archive>
+void serialize(Archive &ar, RunInfo &ri, const unsigned int version)
+{
+    ar &ri.regHI;
+    ar &ri.regLO;
+}
+} // namespace serialization
+} // namespace boost
 
 class Simulator
 {
@@ -40,12 +57,12 @@ public:
 
     // run from x steps from current stepsDone, if 0 run forever
     void stepFwdBy(const uint32_t &steps = 5000);
-    
+
     // step back
     void stepBwd();
     // return currentInfo
     RunInfo toRunInfo() const;
-    
+
 private:
     // instantiate memory
     Memory memory;
@@ -58,7 +75,6 @@ private:
     // this maps from PC-ADDR_INSTR to the line number
     vector<uint32_t> lineMap;
     RunErr runErr;
-
 
     uint32_t instr_idx; // idx of first byte of instruction in byte_inst
     uint32_t curr_inst; // current instruction
@@ -167,7 +183,6 @@ private:
     // helper
     int32_t sign_extend_16(int16_t num);
     int32_t sign_extend_8(int8_t num);
-
 
     // debug
     // void getlogs();

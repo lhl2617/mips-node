@@ -6,6 +6,7 @@
 #include "include/parserSimulatorAPI.hpp"
 #include "simulator/include/simulator.hpp"
 
+
 Napi::Array formatMIPS(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
@@ -69,28 +70,31 @@ Napi::Array compileMIPS(const Napi::CallbackInfo &info)
     return ret;
 }
 
-// Napi::Object testGetRunInfo(const Napi::CallbackInfo &info)
-// {
-//     Napi::Env env = info.Env();
+Napi::String playground(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
 
-//     std::string input = (std::string)info[0].ToString();
+    std::string input = (std::string)info[0].ToString();
 
-//     RunInfo res;
+    std::string res;
 
-//     try
-//     {
-//         res = getRunInfo(input);
-//     }
-//     catch (retException &e)
-//     {
-//         throw Napi::Error::New(env, e.msg);
-//     }
-//     catch (RunErr &e)
-//     {
-//         throw Napi::Error::New(env, e.message);
-//     }
+    try
+    {
+        res = testBoost(input);
+    }
+    catch (retException &e)
+    {
+        throw Napi::Error::New(env, e.msg);
+    }
+    catch (RunErr &e)
+    {
+        throw Napi::Error::New(env, e.message);
+    }
 
-// }
+    auto ret = Napi::String::New(env, res);
+
+    return ret;
+}
 
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
@@ -101,6 +105,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports.Set(
         Napi::String::New(env, "compileMIPS"),
         Napi::Function::New(env, compileMIPS));
+    exports.Set(
+        Napi::String::New(env, "playground"),
+        Napi::Function::New(env, playground));
     return exports;
 }
 

@@ -26,8 +26,12 @@
           "./src/index.cpp"
         ],
         "include_dirs": [
-          "<!@(node -p \"require('node-addon-api').include\")"
+          "<!@(node -p \"require('node-addon-api').include\")",
+                "C:\\Program Files\\boost\\boost_1_72_0"
         ],
+        "libraries": [
+          "C:\\Program Files\\boost\\boost_1_72_0\\stage\\lib\\libboost_serialization-vc142-mt-s-x64-1_72.lib"
+        ]
       }
     ]
   }
