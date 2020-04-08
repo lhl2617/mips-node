@@ -83,7 +83,7 @@ bool validIntStr(std::string arg, int32_t &returnVal)
     return true;
 }
 
-void pushInVec(ParsedLines &commVector, std::vector<std::string> &inVec, unsigned int &count, std::istringstream &remain, const int &lineNo)
+void pushInVec(ParsedLines &commVector, std::vector<std::string> &inVec, unsigned int &count, std::istringstream &remain, const unsigned int &lineNo)
 {
     // check for comment in remain
     std::string remainTok;
@@ -228,4 +228,12 @@ std::vector<CompiledSimInput> compileForSimulator(ParsedLines &commVector)
         }
     }
     return out;
+}
+
+bool labelReturn(std::string str, int32_t &addr)
+{
+    if (labelMap.find(str) == labelMap.end())
+        return false;
+    addr = labelMap[str];
+    return true;
 }

@@ -8,17 +8,12 @@
 
 #include "memory.hpp"
 #include "../../include/parserSimulatorAPI.hpp"
+#include "../../include/util.hpp"
 
 using namespace std;
 
-uint32_t SIMULATOR_HISTORY_MAX_LENGTH = 10;
-uint32_t MAX_RUN_STEPS = 5000;
-struct RunErr
-{
-    bool error = false;
-    string message = "";
-    string header = "";
-};
+// extern uint32_t SIMULATOR_HISTORY_MAX_LENGTH;
+// extern uint32_t MAX_RUN_STEPS;
 
 struct RunInfo
 {
@@ -43,6 +38,14 @@ public:
     Simulator(const RunInfo &ri);
     // int init(const string &in_filename); // init instr into memory, return exit code
 
+    // run from x steps from current stepsDone, if 0 run forever
+    void stepFwdBy(const uint32_t &steps = 5000);
+    
+    // step back
+    void stepBwd();
+    // return currentInfo
+    RunInfo toRunInfo() const;
+    
 private:
     // instantiate memory
     Memory memory;
@@ -85,19 +88,12 @@ private:
     uint32_t debugsrc;
     uint32_t debugsrc1;
     uint32_t debugsrc2;
-    // run from x steps from current stepsDone
-    void stepFwdBy(const uint32_t &steps = MAX_RUN_STEPS);
     // step front - target is only used to optimise updateHistory
     void stepFwd(const uint32_t &target = 0);
-    // step back
-    void stepBwd();
-    // return currentInfo
-    RunInfo toRunInfo() const;
     void assignRunInfo(const RunInfo &ri);
 
     void updateHistory();
     void reset();
-    void handleError(const uint32_t &code, const std::string &msg);
 
     void read_inst(); // read next instruction into curr_inst
     void run_inst();  // decode curr_inst and run instruction

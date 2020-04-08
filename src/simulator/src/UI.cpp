@@ -5,6 +5,7 @@
 #include "../../include/util.hpp"
 #include "../include/UI.hpp"
 #include "../../include/defs.hpp"
+#include "../include/simulator.hpp"
 
 inline std::pair<std::string, std::string> getVSCodeNotificationPair(const RunInfo &ri)
 {
@@ -78,7 +79,6 @@ UIPayload toUIPayload(const RunInfo &ri)
 {
     auto regs = getRegsUI(ri);
     auto mem = getMemUI(ri.memory);
-    std::vector<std::pair<uint32_t, uint32_t>> mem; // addr, val
     auto statusBarPair = getStatusBarPair(ri);
     std::string &statusBarMsg = statusBarPair.first;
     std::string &statusBarClassName = statusBarPair.second;

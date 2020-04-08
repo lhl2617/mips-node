@@ -18,8 +18,10 @@ void Simulator::add() {
 			debug << "!!!!! Overflow !!!!!" << endl;
 			debug << "add: " << "$" << +r_rd << " = $" << +r_rs << " + $" << +r_rt << endl;
 			debug << dec << result << " = " << src1 << " + " << src2 << endl;
-			if (LOG_DEBUG) getlogs();
-			exit(ARITHMETIC_EXCEPTION);
+			// if (LOG_DEBUG) getlogs();
+            
+		    throwError(ARITHMETIC_EXCEPTION, "add Overflow");
+            return;
 	}
 	
 	write_reg(r_rd, result);
@@ -375,8 +377,9 @@ void Simulator::sub() {
 		debug << "!!!!! Overflow !!!!!" << endl; 
 		debug << "sub: " << "$" << +r_rd << " = $" << +r_rs << " - $" << +r_rt << endl;
 		debug << dec << "DEC " << (int32_t) reg[r_rd] << " = " << src1 << " - " << src2 << endl;
-		if (LOG_DEBUG) getlogs();
-		exit(ARITHMETIC_EXCEPTION);
+		// if (LOG_DEBUG) getlogs();
+		throwError(ARITHMETIC_EXCEPTION, "addi Overflow");
+        return;
 }
 
 	write_reg(r_rd, result);

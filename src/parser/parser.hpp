@@ -13,7 +13,6 @@ using namespace std; // hack because isspace fails on msvs
 
 typedef uint32_t (*commandFn)(std::vector<std::string> &argVec, int i);
 
-typedef std::vector<ParsedLine> ParsedLines;
 
 struct numFn
 {
@@ -26,6 +25,7 @@ struct ParsedLine {
     unsigned int lineNo;  
     bool isComment = false;
 };
+typedef std::vector<ParsedLine> ParsedLines;
 
 bool validIntStr(std::string arg, int32_t &returnVal);
 void pushInVec(ParsedLines &commVector, std::vector<std::string> &inVec, unsigned int &count, std::istringstream &remain, const int &lineNo);

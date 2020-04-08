@@ -5,7 +5,7 @@
 #include <string>
 #include "parser.hpp"
 #include "../include/util.hpp"
-#include "../../include/defs.hpp"
+#include "../include/defs.hpp"
 
 std::map<std::string, uint32_t> regMap = {
     {"$zero", 0},

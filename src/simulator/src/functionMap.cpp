@@ -85,7 +85,7 @@ void Simulator::call_r(uint8_t param) {
 			bitwise_xor();
 			break;
 		default:
-            handleError(INVALID_INSTRUCTION, "R type function not available.");
+            throwError(INVALID_INSTRUCTION, "R type function not available.");
 			break;
 	}
 	return;
@@ -165,9 +165,7 @@ void Simulator::call_i(uint8_t param) {
 			xori();
 			break;
 		default:
-			cerr << "I type function not available." << endl;
-			// if (LOG_DEBUG) getlogs();
-			exit(INVALID_INSTRUCTION);	
+			throwError(INVALID_INSTRUCTION, "I type function not available.");
 			break;
 	}
 	return;
@@ -188,9 +186,7 @@ void Simulator::call_cond_B() {
 			bgezal();
 			break;
 		default:
-			cerr << "I type function not available." << endl;
-			// if (LOG_DEBUG) getlogs();
-			exit(INVALID_INSTRUCTION);	
+			throwError(INVALID_INSTRUCTION, "I type function not available.");
 			break;
 	}
 
@@ -205,9 +201,7 @@ void Simulator::call_j(uint8_t param) {
 			jal();
 			break;
 		default:
-			cerr << "J type function not available." << endl;
-			// if (LOG_DEBUG) getlogs();
-			exit(INVALID_INSTRUCTION);	
+			throwError(INVALID_INSTRUCTION, "J type function not available.");
 			break;
 	}
 	return;

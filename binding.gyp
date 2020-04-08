@@ -13,8 +13,15 @@
           'VCCLCompilerTool': { 'ExceptionHandling': 1 },
         },
         "sources": [
-          "./src/instructionList.cpp",
-          "./src/parser.cpp",
+          "./src/parser/instructionList.cpp",
+          "./src/parser/parser.cpp",
+          "./src/simulator/src/functionMap.cpp",
+          "./src/simulator/src/ISA-I.cpp",
+          "./src/simulator/src/ISA-J.cpp",
+          "./src/simulator/src/ISA-R.cpp",
+          "./src/simulator/src/memory.cpp",
+          "./src/simulator/src/simulator.cpp",
+          "./src/simulator/src/UI.cpp",
           "./src/main.cpp",
           "./src/index.cpp"
         ],

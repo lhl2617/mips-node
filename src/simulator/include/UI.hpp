@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "../../include/util.hpp"
+#include "../include/simulator.hpp"
 
 struct VSCodePayload
 {

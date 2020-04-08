@@ -35,7 +35,8 @@ void Simulator::addi()
 		debug << "addi: " << "$" << +i_rd << " = $" << +i_rs << " + " << immediate << endl;
 		debug << dec << "DEC " << (int32_t) reg[i_rd] << " = " << src << " + " << immediate << endl;
 		// if (LOG_DEBUG) getlogs();
-        exit(ARITHMETIC_EXCEPTION);
+		throwError(ARITHMETIC_EXCEPTION, "addi Overflow");
+        return;
     }
     
     write_reg(i_rd, result);

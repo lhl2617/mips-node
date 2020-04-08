@@ -1,6 +1,8 @@
 #include "../include/memory.hpp"
 #include "../../include/defs.hpp"
+#include "../../include/util.hpp"
 #include <algorithm>
+#include <string>
 using namespace std;
 
 Memory::Memory()
@@ -18,8 +20,7 @@ void Memory::put_char(const uint32_t &word) const
     }
     catch (const exception &e)
     {
-        cerr << "I/O Error (-21)" << endl;
-        exit(INTERNAL_ERROR);
+        throwError(INTERNAL_ERROR, "I/O Error");
     }
 }
 
@@ -45,8 +46,7 @@ uint32_t Memory::read_word_cin() const
     }
     catch (const exception &e)
     {
-        cerr << "I/O Error (-21)" << endl;
-        exit(INTERNAL_ERROR);
+        throwError(INTERNAL_ERROR, "I/O Error");
     }
 }
 
@@ -78,9 +78,7 @@ uint32_t Memory::read_word(const uint32_t &addr) const
     }
     else
     {
-        debug << "Memory Exception (-11): Out of range" << endl;
-        debug << "Address tried: " << addr << endl;
-        exit(MEMORY_EXCEPTION);
+        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
     }
 }
 
@@ -102,9 +100,7 @@ void Memory::write_word(const uint32_t &word, const uint32_t &addr)
     }
     else
     {
-        debug << "Memory Exception (-11): Out of range" << endl;
-        debug << "Address tried: " << addr << endl;
-        exit(MEMORY_EXCEPTION);
+        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
     }
 }
 
@@ -154,9 +150,7 @@ uint32_t Memory::read_half_word(const uint32_t &addr) const
     }
     else
     {
-        debug << "Memory Exception (-11): Out of range" << endl;
-        debug << "Address tried: " << addr << endl;
-        exit(MEMORY_EXCEPTION);
+        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
     }
 }
 
@@ -180,9 +174,7 @@ void Memory::write_half_word(const uint32_t &word, const uint32_t &addr)
     }
     else
     {
-        debug << "Memory Exception (-11): Out of range" << endl;
-        debug << "Address tried: " << addr << endl;
-        exit(MEMORY_EXCEPTION);
+        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
     }
 }
 
@@ -226,9 +218,7 @@ uint32_t Memory::read_byte(const uint32_t &addr) const
     }
     else
     {
-        debug << "Memory Exception (-11): Out of range" << endl;
-        debug << "Address tried: " << addr << endl;
-        exit(MEMORY_EXCEPTION);
+        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
     }
 }
 
@@ -252,9 +242,7 @@ void Memory::write_byte(const uint32_t &word, const uint32_t &addr)
     }
     else
     {
-        debug << "Memory Exception (-11): Out of range" << endl;
-        debug << "Address tried: " << addr << endl;
-        exit(MEMORY_EXCEPTION);
+        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
     }
 }
 
@@ -268,8 +256,7 @@ void Memory::write_instr(const uint8_t &byte_instr)
     }
     else
     {
-        debug << "Stopped writing: Binary file too large!" << endl;
-        exit(MEMORY_EXCEPTION);
+        throwError(MEMORY_EXCEPTION, "Program too large!");
     }
 }
 
@@ -296,20 +283,12 @@ uint32_t Memory::read_instr(const uint32_t &pc) const
         }
         else
         {
-            debug << "PC invalid: ";
-            debug << "PC out of range" << endl;
-            debug << "Memory Exception (-11)" << endl;
-            debug << "Address tried: " << pc << endl;
-            exit(MEMORY_EXCEPTION);
+            throwError(MEMORY_EXCEPTION, "Program counter out of range; address tried: " + to_string(pc));
         }
     }
     else
     {
-        debug << "PC invalid: ";
-        debug << "PC not divisible by 4" << endl;
-        debug << "Memory Exception (-11)" << endl;
-        debug << "Address tried: " << pc << endl;
-        exit(MEMORY_EXCEPTION);
+        throwError(MEMORY_EXCEPTION, "PC not divisible by 4; Address tried: " + to_string(pc));
     }
 }
 

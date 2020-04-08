@@ -5,8 +5,9 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 
-#include "simulator/include/simulator.hpp"
+#include "./defs.hpp"
 
 using namespace std;
 
@@ -16,22 +17,47 @@ struct retException
     std::string msg;
 };
 
-// for parser and formatter part
-void exitError(std::string err, int line, int code)
+struct RunErr
 {
-    // std::cerr << errMsg << std::endl << std::endl;
-    // std::exit(code);
+    bool error = false;
+    string header = "";
+    string message = "";
+};
+
+// for parser and formatter part
+inline void exitError(std::string err, int line, int code)
+{
     std::string errMsg = std::to_string(line) + " ----- " + err;
     throw retException({code, errMsg});
 }
 
-std::istringstream stringToStream(const std::string &s)
+// for simulator
+inline void throwError(const int &code, const std::string &msg)
+{
+    std::string header;
+    if (code == ARITHMETIC_EXCEPTION)
+        header = "ARITHMETIC_EXCEPTION";
+    else if (code == MEMORY_EXCEPTION)
+        header = "MEMORY_EXCEPTION";
+    else if (code == INVALID_INSTRUCTION)
+        header = "INVALID_INSTRUCTION";
+    else if (code == INTERNAL_ERROR)
+        header = "INTERNAL_ERROR";
+    else if (code == IO_ERROR)
+        header = "IO_ERROR";
+    else
+        header = "UNKNOWN_ERROR";
+
+    throw RunErr({ true, header, msg });
+}
+
+inline std::istringstream stringToStream(const std::string &s)
 {
     std::istringstream out(s);
     return out;
 }
 
-std::string trim(const std::string &s)
+inline std::string trim(const std::string &s)
 {
     auto wsfront = std::find_if_not(s.begin(), s.end(), [](int c) { return isspace(c); });
     auto wsback = std::find_if_not(s.rbegin(), s.rend(), [](int c) { return isspace(c); }).base();

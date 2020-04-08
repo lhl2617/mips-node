@@ -32,8 +32,9 @@ public:
     vector<uint32_t> getRWMemorySortedIndices() const;
 
     void reserveInstrMem(const uint32_t &len);
-
+    
     void reset();
+
 
 private:
     unordered_map<uint32_t, uint8_t> rw_memory;
