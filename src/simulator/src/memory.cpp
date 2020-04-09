@@ -246,13 +246,16 @@ void Memory::write_byte(const uint32_t &word, const uint32_t &addr)
     }
 }
 
-// write binary file input into memory (byte by byte)
-void Memory::write_instr(const uint8_t &byte_instr)
+void Memory::write_instr(const uint32_t &instr)
 {
     if (instr_len < ADDR_INSTR_LENGTH)
     {
-        instr_memory.push_back(byte_instr);
-        instr_len++;
+        instr_memory.push_back((instr >> 24) & MASK_8_BIT);
+        instr_memory.push_back((instr >> 16) & MASK_8_BIT);
+        instr_memory.push_back((instr >> 8) & MASK_8_BIT);
+        instr_memory.push_back(instr & MASK_8_BIT);
+
+        instr_len += 4;
     }
     else
     {

@@ -15,7 +15,6 @@
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/vector.hpp>
 
-
 using namespace std;
 
 // extern uint32_t SIMULATOR_HISTORY_MAX_LENGTH;

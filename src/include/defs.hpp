@@ -4,7 +4,7 @@
 #include <bitset>
 #include <iostream>
 
-#define LOG_DEBUG 0 // enable debug
+#define LOG_DEBUG 1 // enable debug
 #define LOG_INSTR 0 // print out instruction as binary
 
 #define debug if (!LOG_DEBUG) {} else std::cerr

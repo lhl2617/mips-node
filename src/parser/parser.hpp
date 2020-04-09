@@ -27,7 +27,7 @@ struct ParsedLine {
 };
 typedef std::vector<ParsedLine> ParsedLines;
 
-bool validIntStr(std::string arg, int32_t &returnVal);
+bool validIntStr(std::string arg, int32_t &returnVal, const int &pc = 0);
 void pushInVec(ParsedLines &commVector, std::vector<std::string> &inVec, unsigned int &count, std::string &remain, const int &lineNo);
 void parseLine(
     std::string &lineStr,

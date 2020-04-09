@@ -35,7 +35,7 @@ Simulator::Simulator(const vector<CompiledSimInput> &v)
 {
     reset();
 
-    memory.reserveInstrMem(v.size());
+    memory.reserveInstrMem(v.size() * 4);
     lineMap.reserve(v.size());
     for (auto &x : v)
     {

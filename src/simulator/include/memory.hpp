@@ -29,7 +29,7 @@ public:
     uint32_t read_byte(const uint32_t &addr) const;
     void write_byte(const uint32_t &word, const uint32_t &addr);
 
-    void write_instr(const uint8_t &byte_instr);
+    void write_instr(const uint32_t &byte_instr);
     uint32_t read_instr(const uint32_t &pc) const;
 
     uint8_t getFromRWMemory(const uint32_t &addr) const;

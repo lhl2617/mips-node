@@ -8,6 +8,7 @@
 #include "include/util.hpp"
 #include "include/parserSimulatorAPI.hpp"
 #include "simulator/include/simulator.hpp"
+#include "simulator/include/UI.hpp"
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -47,6 +48,26 @@ std::string getPickledRunInfo(const std::string &rawCode)
     Simulator s(compiledSimInputs);
     auto ri = s.toRunInfo();
     return ri.pickle();
+}
+
+Payload stepCode(const std::string &pickledRI, const int &steps)
+{
+    RunInfo ri;
+    ri.unpickle(pickledRI);
+    Simulator s(ri);
+    s.stepCode(steps);
+    auto endingRi = s.toRunInfo();
+
+    auto pickledRIEnd = endingRi.pickle();
+    auto vp = toVSCodePayload(endingRi);
+    auto up = toUIPayload(endingRi);
+    Payload ret = {
+        pickledRIEnd,
+        vp,
+        up
+    };
+
+    return ret;
 }
 
 std::string testBoost(const std::string &rawCode)

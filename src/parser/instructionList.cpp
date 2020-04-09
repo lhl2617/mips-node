@@ -119,8 +119,10 @@ uint32_t R_TYPE(std::vector<std::string> &argVec, const std::vector<OP_TYPE> &op
         {
         case shAmt:
             int32_t shAmtNum;
-            if (!validIntStr(argVec[i + 1], shAmtNum))
+            if (!validIntStr(argVec[i + 1], shAmtNum, pc))
                 exitError("Invalid instruction argument \"" + giveStr(argVec) + "\"", pc + 1, 5);
+            if (shAmtNum != (shAmtNum & 0x1F))
+                exitError("Invalid shamt: \"" + to_string(shAmtNum) + "\".", pc + 1, 5);
             returnNum = returnNum | ((shAmtNum & 0x1F) << 6);
             break;
         case $d:
@@ -163,9 +165,11 @@ uint32_t I_TYPE(std::vector<std::string> &argVec, const std::vector<OP_TYPE> &op
             }
             else
             {
-                if (!validIntStr(argVec[i + 1], immediate))
+                if (!validIntStr(argVec[i + 1], immediate, pc))
                     exitError("Invalid instruction argument \"" + giveStr(argVec) + "\"", pc + 1, 5);
             }
+            if (immediate != (immediate & 0xFFFF))
+                exitError("Immediate out of range: \"" + to_string(immediate) + "\"", pc + 1, 5);
             returnNum = returnNum | (immediate & 0xFFFF);
             break;
         case $t:

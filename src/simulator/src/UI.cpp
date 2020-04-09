@@ -20,12 +20,15 @@ inline std::pair<std::string, std::string> getVSCodeNotificationPair(const RunIn
 VSCodePayload toVSCodePayload(const RunInfo &ri)
 {
     auto notificationPair = getVSCodeNotificationPair(ri);
+    unsigned int lineNo = (ri.pc == ADDR_NULL) || (ri.pc < ADDR_INSTR) ? ri.lineMap.back() : ri.lineMap[ri.pc - ADDR_INSTR];
+
     VSCodePayload ret =
         {
-            ri.lineMap[ri.pc - ADDR_INSTR],
+            lineNo,
             "editor-line-highlight",
             notificationPair.first,
             notificationPair.second};
+            
     return ret;
 }
 

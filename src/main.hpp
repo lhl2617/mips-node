@@ -11,7 +11,7 @@
 // interface to node
 struct Payload
 {
-    std::string pickledRunInfo;
+    std::string ri; // pickled runinfo
     VSCodePayload v;
     UIPayload u;
 };
@@ -25,7 +25,7 @@ std::vector<uint32_t> compile(const std::string &rawCode);
 std::string getPickledRunInfo(const std::string &rawCode);
 
 /// stepCode
-Payload stepCode(const int &steps);
+Payload stepCode(const std::string &pickledRI, const int &steps);
 
 std::string testBoost(const std::string &rawCode);
 #endif

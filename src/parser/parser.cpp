@@ -72,10 +72,17 @@ std::unordered_map<std::string, numFn> commMap = {
 
 std::map<std::string, unsigned int> labelMap;
 
-bool validIntStr(std::string arg, int32_t &returnVal)
+bool validIntStr(std::string arg, int32_t &returnVal, const int &pc)
 {
     std::size_t pos;
-    returnVal = std::stoi(arg, &pos, 0);
+    try
+    {
+        returnVal = std::stoi(arg, &pos, 0);
+    }
+    catch (...)
+    {
+        exitError("Immediate \"" + arg + "\" too large!", pc + 1, 5);
+    }
     if (pos != arg.length())
     {
         return false;
@@ -120,7 +127,7 @@ void parseLine(
     {
         // whole line is a comment
         std::string commentContent = trim(line.str()).substr(1);
-        ParsedLine p = {{ "# " + trim(commentContent)}, lineNo, true};
+        ParsedLine p = {{"# " + trim(commentContent)}, lineNo, true};
         commVector.push_back(p);
     }
     else if (func.back() == ':')
