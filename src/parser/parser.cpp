@@ -83,20 +83,19 @@ bool validIntStr(std::string arg, int32_t &returnVal)
     return true;
 }
 
-void pushInVec(ParsedLines &commVector, std::vector<std::string> &inVec, unsigned int &count, std::istringstream &remain, const unsigned int &lineNo)
+void pushInVec(ParsedLines &commVector, std::vector<std::string> &inVec, unsigned int &count, std::string &remain, const unsigned int &lineNo)
 {
     // check for comment in remain
-    std::string remainTok;
-    std::string remainStr = remain.str();
-    if (remain >> remainTok)
+    std::string trimmedRemain = trim(remain);
+    if (trimmedRemain.size())
     {
-        if (remainTok[0] == '#')
+        if (trimmedRemain[0] == '#')
         {
-            inVec.push_back("# " + remainTok.substr(1) + trim(remain.str()));
+            inVec.push_back("# " + trim(trimmedRemain.substr(1)));
         }
         else
         {
-            exitError("Too many arguments: \"" + remainStr + "\"", lineNo, 5);
+            exitError("Too many arguments: \"" + trimmedRemain + "\"", lineNo, 5);
         }
     }
 
@@ -105,8 +104,102 @@ void pushInVec(ParsedLines &commVector, std::vector<std::string> &inVec, unsigne
     count += 4;
 }
 
+void parseLine(
+    std::string &lineStr,
+    ParsedLines &commVector,
+    const unsigned int &lineNo,
+    unsigned int &count,
+    const bool &formatMode)
+{
+    std::string func;
+    std::istringstream line = stringToStream(lineStr);
+    line >> func;
+    if (func == "exit")
+        return;
+    else if (func[0] == '#')
+    {
+        // whole line is a comment
+        std::string commentContent = trim(line.str()).substr(1);
+        ParsedLine p = {{ "# " + trim(commentContent)}, lineNo, true};
+        commVector.push_back(p);
+    }
+    else if (func.back() == ':')
+    {
+        if (formatMode)
+            commVector.push_back({{func}, lineNo});
+        func.pop_back();
+        labelMap[func] = count;
+
+        // after a label, don't parse the instruction
+        std::string remain;
+        getline(line, remain);
+        if (trim(remain).length())
+        {
+            exitError("Not supported: instruction on the same line as a label: \"" + remain + "\"", lineNo, 5);
+        }
+    }
+    else if (!commMap.count(func))
+    {
+        exitError("Invalid instruction \"" + func + "\"", lineNo, 5);
+    }
+    else
+    {
+        std::vector<std::string> inVec;
+        if (func == "jalr")
+        {
+            std::string arg1, arg2;
+            if (!(line >> arg1))
+                exitError("Not enough arguments for final instruction.", lineNo, 5);
+            if (!(line >> arg2))
+            {
+                inVec.push_back(func);
+                inVec.push_back("$31");
+                inVec.push_back(arg1);
+                std::string remain;
+                getline(line, remain);
+                pushInVec(commVector, inVec, count, remain, lineNo);
+            }
+            if (indRegCheck(arg2))
+            {
+                inVec.push_back(func);
+                inVec.push_back(arg1);
+                inVec.push_back(arg2);
+                std::string remain;
+                getline(line, remain);
+                pushInVec(commVector, inVec, count, remain, lineNo);
+            }
+            else
+            {
+                inVec.push_back(func);
+                inVec.push_back("$31");
+                inVec.push_back(arg1);
+                std::string remain;
+                getline(line, remain);
+                pushInVec(commVector, inVec, count, remain, lineNo);
+
+                /// won't be used -- now we are governed by lines
+                // return addVec(inStream, commVector, count, arg2);
+            }
+        }
+        else
+        {
+            inVec.push_back(func);
+            for (int i = 0; i < commMap[func].numArgs; ++i)
+            {
+                std::string arg;
+                if (!(line >> arg))
+                    exitError("Not enough arguments for final instruction.", lineNo, 5);
+                inVec.push_back(arg);
+            }
+            std::string remain;
+            getline(line, remain);
+            pushInVec(commVector, inVec, count, remain, lineNo);
+        }
+    }
+}
+
 /// parse an incoming string into a vector of ParsedLines
-void parseLines(std::istream &inStream, ParsedLines &commVector)
+void parseLines(std::istream &inStream, ParsedLines &commVector, const bool &formatMode)
 {
     unsigned int count = ADDR_INSTR;
     unsigned int lineNo = 0;
@@ -114,72 +207,8 @@ void parseLines(std::istream &inStream, ParsedLines &commVector)
     std::string func;
     while (getline(inStream, lineStr))
     {
-        std::istringstream line = stringToStream(lineStr);
-        line >> func;
-        if (func == "exit")
-            return;
-        else if (func[0] == '#')
-        {
-            // whole line is a comment
-            ParsedLine p = {{"", trim(line.str())}, lineNo, true};
-            commVector.push_back(p);
-        }
-        else if (func.back() == ':')
-        {
-            func.pop_back();
-            labelMap[func] = count;
-        }
-        else if (!commMap.count(func))
-        {
-            exitError("Invalid instruction \"" + func + "\"", lineNo, 5);
-        }
-        else
-        {
-            std::vector<std::string> inVec;
-            if (func == "jalr")
-            {
-                std::string arg1, arg2;
-                if (!(line >> arg1))
-                    exitError("Not enough arguments for final instruction.", lineNo, 5);
-                if (!(line >> arg2))
-                {
-                    inVec.push_back(func);
-                    inVec.push_back("$31");
-                    inVec.push_back(arg1);
-                    pushInVec(commVector, inVec, count, line, lineNo);
-                }
-                if (indRegCheck(arg2))
-                {
-                    inVec.push_back(func);
-                    inVec.push_back(arg1);
-                    inVec.push_back(arg2);
-                    pushInVec(commVector, inVec, count, line, lineNo);
-                }
-                else
-                {
-                    inVec.push_back(func);
-                    inVec.push_back("$31");
-                    inVec.push_back(arg1);
-                    pushInVec(commVector, inVec, count, line, lineNo);
-
-                    /// won't be used -- now we are governed by lines
-                    // return addVec(inStream, commVector, count, arg2);
-                }
-            }
-            else
-            {
-                inVec.push_back(func);
-                for (int i = 0; i < commMap[func].numArgs; ++i)
-                {
-                    std::string arg;
-                    if (!(line >> arg))
-                        exitError("Not enough arguments for final instruction.", lineNo, 5);
-                    inVec.push_back(arg);
-                }
-                pushInVec(commVector, inVec, count, line, lineNo);
-            }
-            ++lineNo;
-        }
+        parseLine(lineStr, commVector, lineNo, count, formatMode);
+        ++lineNo;
     }
 }
 
@@ -204,6 +233,10 @@ std::vector<string> formatParsedLines(ParsedLines &commVector)
     for (auto &x : commVector)
     {
         std::stringstream ss;
+
+        // add indentation if not label
+        if (x.comm.size() && x.comm[0].back() != ':')
+            ss << std::left << std::setw(8) << "";
 
         for (std::string &elem : x.comm)
         {

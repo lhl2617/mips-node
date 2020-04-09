@@ -28,8 +28,14 @@ struct ParsedLine {
 typedef std::vector<ParsedLine> ParsedLines;
 
 bool validIntStr(std::string arg, int32_t &returnVal);
-void pushInVec(ParsedLines &commVector, std::vector<std::string> &inVec, unsigned int &count, std::istringstream &remain, const int &lineNo);
-void parseLines(std::istream &inStream, ParsedLines &commVector);
+void pushInVec(ParsedLines &commVector, std::vector<std::string> &inVec, unsigned int &count, std::string &remain, const int &lineNo);
+void parseLine(
+    std::string &lineStr,
+    ParsedLines &commVector,
+    const unsigned int &lineNo,
+    unsigned int &count,
+    const bool &formatMode);
+void parseLines(std::istream &inStream, ParsedLines &commVector, const bool& formatMode);
 std::vector<uint32_t> compileParsedLines(ParsedLines &commVector);
 std::vector<string> formatParsedLines(ParsedLines &commVector);
 std::vector<CompiledSimInput> compileForSimulator(ParsedLines &commVector);

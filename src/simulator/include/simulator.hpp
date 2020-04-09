@@ -5,13 +5,13 @@
 #include <string>
 #include <fstream>
 #include <list>
+#include <iostream>
 
 #include "memory.hpp"
 #include "../../include/parserSimulatorAPI.hpp"
 #include "../../include/util.hpp"
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 
 using namespace std;
 
@@ -30,20 +30,16 @@ public:
     list<RunInfo> history;
     vector<uint32_t> lineMap;
     RunErr runErr;
-};
 
-namespace boost
-{
-namespace serialization
-{
-template <class Archive>
-void serialize(Archive &ar, RunInfo &ri, const unsigned int version)
-{
-    ar &ri.regHI;
-    ar &ri.regLO;
-}
-} // namespace serialization
-} // namespace boost
+private:
+    friend class boost::serialization::access;
+    void serialize(boost::archive::binary_oarchive &ar, const unsigned int version)
+    {
+        cout << "test";
+        ar &regHI;
+        ar &regLO;
+    }
+};
 
 class Simulator
 {
@@ -61,7 +57,7 @@ public:
     // step back
     void stepBwd();
     // return currentInfo
-    RunInfo toRunInfo() const;
+    RunInfo toRunInfo(const bool& keepHistory = true) const;
 
 private:
     // instantiate memory

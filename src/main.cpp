@@ -9,17 +9,29 @@
 #include "include/parserSimulatorAPI.hpp"
 #include "simulator/include/simulator.hpp"
 
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
+class TestClass
+{
+private:
+    int a = 1;
+    int b = 2;
 
+    friend class boost::serialization::access;
+    void serialize(boost::archive::binary_oarchive &ar, const unsigned int version)
+    {
+        ar &a;
+        ar &b;
+    }
+};
 
 /// entry: format
 std::vector<std::string> format(const std::string &rawCode)
 {
     auto stream = stringToStream(rawCode);
     ParsedLines ps;
-    parseLines(stream, ps);
+    parseLines(stream, ps, true);
     return formatParsedLines(ps);
 }
 
@@ -28,7 +40,7 @@ std::vector<uint32_t> compile(const std::string &rawCode)
 {
     auto stream = stringToStream(rawCode);
     ParsedLines ps;
-    parseLines(stream, ps);
+    parseLines(stream, ps, false);
     return compileParsedLines(ps);
 }
 
@@ -44,7 +56,7 @@ RunInfo getRunInfo(const std::string &rawCode)
 {
     auto stream = stringToStream(rawCode);
     ParsedLines ps;
-    parseLines(stream, ps);
+    parseLines(stream, ps, false);
     auto compiledSimInputs = compileForSimulator(ps);
     Simulator s(compiledSimInputs);
     auto ri = s.toRunInfo();
@@ -53,14 +65,38 @@ RunInfo getRunInfo(const std::string &rawCode)
 
 std::string testBoost(const std::string &rawCode)
 {
-    auto stream = stringToStream(rawCode);
-    ParsedLines ps;
-    parseLines(stream, ps);
-    auto compiledSimInputs = compileForSimulator(ps);
-    Simulator s(compiledSimInputs);
-    auto ri = s.toRunInfo();
-    std::ostringstream os;
-    boost::archive::text_oarchive oa(os);
-    oa << ri;
-    return os.str();
+    // auto stream = stringToStream(rawCode);
+    // ParsedLines ps;
+    // parseLines(stream, ps, false);
+    // auto compiledSimInputs = compileForSimulator(ps);
+    // Simulator s(compiledSimInputs);
+    // auto ri = s.toRunInfo();
+    // // std::ostringstream os;
+    // std::ofstream ofs("filename");
+    // boost::archive::text_oarchive oa(ofs);
+    // std::cout << '1';
+    // oa << ri;
+    // std::cout << '2';
+    // // oa << ".";
+    // // return os.str();
+    // return "reeee";
+
+    TestClass a;
+    std::ofstream ofs("filename.txt", std::ios::binary);
+    boost::archive::binary_oarchive ar(ofs);
+    std::cout << '1';
+    try
+    {
+        ar << a;
+    }
+    catch(boost::archive::archive_exception e)
+    {
+        cout << "what?";
+    }
+    // catch(...)
+    // {
+    //     cout << "UNCAUGHT";
+    // }
+    std::cout << '2';
+    return "REEE";
 }

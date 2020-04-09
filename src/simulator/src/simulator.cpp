@@ -66,10 +66,11 @@ void Simulator::updateHistory()
     if (history.size() == 10)
         history.pop_front();
 
-    history.push_back(toRunInfo());
+    RunInfo noHistory = toRunInfo(false);
+    history.push_back(noHistory);
 }
 
-RunInfo Simulator::toRunInfo() const
+RunInfo Simulator::toRunInfo(const bool& keepHistory) const
 {
     RunInfo r = {
         memory,
@@ -78,7 +79,7 @@ RunInfo Simulator::toRunInfo() const
         regLO,
         pc,
         stepsDone,
-        history,
+        keepHistory ? history : std::list<RunInfo>(),
         lineMap,
         runErr};
     return r;
@@ -156,6 +157,8 @@ void Simulator::stepBwd()
     {
         auto ret = history.front();
         history.pop_front();
+        // only the front most has history, need to keep it that way.
+        ret.history = history;
         assignRunInfo(ret);
     }
     else

@@ -90,6 +90,10 @@ Napi::String playground(const Napi::CallbackInfo &info)
     {
         throw Napi::Error::New(env, e.message);
     }
+    catch (const exception& e)
+    {
+        throw Napi::Error::New(env, e.what());
+    }
 
     auto ret = Napi::String::New(env, res);
 
