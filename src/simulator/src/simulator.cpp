@@ -8,6 +8,24 @@ using namespace std;
 // uint32_t SIMULATOR_HISTORY_MAX_LENGTH = 10;
 // uint32_t MAX_RUN_STEPS = 5000;
 
+void Simulator::stepCode(const int &steps)
+{
+    if (!steps)
+    {
+        return;
+    }
+    else if (steps > 0)
+    {
+        stepFwdBy(steps);
+    }
+    else
+    {
+        int stepsToBack = steps;
+        while (stepsToBack++)
+            stepBwd();
+    }
+}
+
 Simulator::Simulator()
 {
     reset();
@@ -70,7 +88,7 @@ void Simulator::updateHistory()
     history.push_back(noHistory);
 }
 
-RunInfo Simulator::toRunInfo(const bool& keepHistory) const
+RunInfo Simulator::toRunInfo(const bool &keepHistory) const
 {
     RunInfo r = {
         memory,
@@ -97,7 +115,6 @@ void Simulator::assignRunInfo(const RunInfo &ri)
     lineMap = ri.lineMap;
 }
 
-// exposed
 void Simulator::stepFwdBy(const uint32_t &steps)
 {
     uint32_t target = stepsDone + steps;
@@ -150,32 +167,34 @@ void Simulator::stepFwd(const uint32_t &target)
     }
 }
 
-// exposed
 void Simulator::stepBwd()
 {
-    if (history.size())
+    if (stepsDone > 0)
     {
-        auto ret = history.front();
-        history.pop_front();
-        // only the front most has history, need to keep it that way.
-        ret.history = history;
-        assignRunInfo(ret);
-    }
-    else
-    {
-        // we need to run code form reset until stepsDone - 1
-        uint32_t target = stepsDone - 1;
-        reset();
-        try
+        if (history.size())
         {
-            while (stepsDone <= target)
-            {
-                stepFwd(target);
-            }
+            auto ret = history.front();
+            history.pop_front();
+            // only the front most has history, need to keep it that way.
+            ret.history = history;
+            assignRunInfo(ret);
         }
-        catch (RunErr &e)
+        else
         {
-            runErr = e;
+            // we need to run code form reset until stepsDone - 1
+            uint32_t target = stepsDone - 1;
+            reset();
+            try
+            {
+                while (stepsDone <= target)
+                {
+                    stepFwd(target);
+                }
+            }
+            catch (RunErr &e)
+            {
+                runErr = e;
+            }
         }
     }
 }

@@ -6,8 +6,7 @@
 #include "include/parserSimulatorAPI.hpp"
 #include "simulator/include/simulator.hpp"
 
-
-Napi::Array formatMIPS(const Napi::CallbackInfo &info)
+Napi::Array NAPI_format(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
 
@@ -27,6 +26,10 @@ Napi::Array formatMIPS(const Napi::CallbackInfo &info)
     {
         throw Napi::Error::New(env, e.message);
     }
+    catch (...)
+    {
+        throw Napi::Error::New(env, "Unknown error");
+    }
 
     auto ret = Napi::Array::New(env, res.size());
 
@@ -38,7 +41,7 @@ Napi::Array formatMIPS(const Napi::CallbackInfo &info)
     return ret;
 }
 
-Napi::Array compileMIPS(const Napi::CallbackInfo &info)
+Napi::Array NAPI_compile(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
 
@@ -58,7 +61,10 @@ Napi::Array compileMIPS(const Napi::CallbackInfo &info)
     {
         throw Napi::Error::New(env, e.message);
     }
-
+    catch (...)
+    {
+        throw Napi::Error::New(env, "Unknown error");
+    }
 
     auto ret = Napi::Array::New(env, res.size());
 
@@ -66,6 +72,37 @@ Napi::Array compileMIPS(const Napi::CallbackInfo &info)
     {
         ret[i] = res[i];
     }
+
+    return ret;
+}
+
+Napi::String NAPI_getPickledRunInfo(const Napi::CallbackInfo &info)
+{
+
+    Napi::Env env = info.Env();
+
+    std::string input = (std::string)info[0].ToString();
+
+    std::string res;
+
+    try
+    {
+        res = getPickledRunInfo(input);
+    }
+    catch (retException &e)
+    {
+        throw Napi::Error::New(env, e.msg);
+    }
+    catch (RunErr &e)
+    {
+        throw Napi::Error::New(env, e.message);
+    }
+    catch (...)
+    {
+        throw Napi::Error::New(env, "Unknown error");
+    }
+
+    auto ret = Napi::String::New(env, res);
 
     return ret;
 }
@@ -90,9 +127,9 @@ Napi::String playground(const Napi::CallbackInfo &info)
     {
         throw Napi::Error::New(env, e.message);
     }
-    catch (const exception& e)
+    catch (...)
     {
-        throw Napi::Error::New(env, e.what());
+        throw Napi::Error::New(env, "Unknown error");
     }
 
     auto ret = Napi::String::New(env, res);
@@ -100,15 +137,17 @@ Napi::String playground(const Napi::CallbackInfo &info)
     return ret;
 }
 
-
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
     exports.Set(
-        Napi::String::New(env, "formatMIPS"),
-        Napi::Function::New(env, formatMIPS));
+        Napi::String::New(env, "format"),
+        Napi::Function::New(env, NAPI_format));
     exports.Set(
-        Napi::String::New(env, "compileMIPS"),
-        Napi::Function::New(env, compileMIPS));
+        Napi::String::New(env, "compile"),
+        Napi::Function::New(env, NAPI_compile));
+    exports.Set(
+        Napi::String::New(env, "getPickledRunInfo"),
+        Napi::Function::New(env, NAPI_getPickledRunInfo));
     exports.Set(
         Napi::String::New(env, "playground"),
         Napi::Function::New(env, playground));

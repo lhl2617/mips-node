@@ -10,17 +10,19 @@
 #include "memory.hpp"
 #include "../../include/parserSimulatorAPI.hpp"
 #include "../../include/util.hpp"
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/vector.hpp>
+
 
 using namespace std;
 
 // extern uint32_t SIMULATOR_HISTORY_MAX_LENGTH;
 // extern uint32_t MAX_RUN_STEPS;
 
-class RunInfo
+struct RunInfo
 {
-public:
     Memory memory;
     vector<uint32_t> reg;
     uint32_t regHI;
@@ -31,13 +33,33 @@ public:
     vector<uint32_t> lineMap;
     RunErr runErr;
 
-private:
-    friend class boost::serialization::access;
-    void serialize(boost::archive::binary_oarchive &ar, const unsigned int version)
+    std::string pickle()
     {
-        cout << "test";
+        std::ostringstream os;
+        boost::archive::text_oarchive oa(os);
+        oa << *this;
+        return os.str();
+    }
+
+    void unpickle(const std::string s)
+    {
+        std::istringstream is = stringToStream(s);
+        boost::archive::text_iarchive ia(is);
+        ia >> *this;
+    }
+
+    template <class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+        ar &memory;
+        ar &reg;
         ar &regHI;
         ar &regLO;
+        ar &pc;
+        ar &stepsDone;
+        ar &history;
+        ar &lineMap;
+        ar &runErr;
     }
 };
 
@@ -51,13 +73,10 @@ public:
     Simulator(const RunInfo &ri);
     // int init(const string &in_filename); // init instr into memory, return exit code
 
-    // run from x steps from current stepsDone, if 0 run forever
-    void stepFwdBy(const uint32_t &steps = 5000);
-
-    // step back
-    void stepBwd();
     // return currentInfo
-    RunInfo toRunInfo(const bool& keepHistory = true) const;
+    RunInfo toRunInfo(const bool &keepHistory = true) const;
+
+    void stepCode(const int &steps);
 
 private:
     // instantiate memory
@@ -100,6 +119,10 @@ private:
     uint32_t debugsrc;
     uint32_t debugsrc1;
     uint32_t debugsrc2;
+    // run from x steps from current stepsDone, if 0 run until pc == ADDR_NULL
+    void stepFwdBy(const uint32_t &steps = 5000);
+    // step back
+    void stepBwd();
     // step front - target is only used to optimise updateHistory
     void stepFwd(const uint32_t &target = 0);
     void assignRunInfo(const RunInfo &ri);

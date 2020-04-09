@@ -5,6 +5,11 @@
 #include <cstdint>
 #include <unordered_map>
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/unordered_map.hpp>
+#include <boost/serialization/vector.hpp>
+
 using namespace std;
 
 class Memory
@@ -37,6 +42,15 @@ public:
 
 
 private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+        ar &rw_memory;
+        ar &instr_memory;
+        ar &instr_len;
+    }
+
     unordered_map<uint32_t, uint8_t> rw_memory;
     vector<uint8_t> instr_memory;
     uint32_t instr_len;

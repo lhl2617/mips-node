@@ -6,6 +6,8 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 #include "./defs.hpp"
 
@@ -22,6 +24,15 @@ struct RunErr
     bool error = false;
     string header = "";
     string message = "";
+
+    
+    template <class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+        ar &error;
+        ar &header;
+        ar &message;
+    }
 };
 
 // for parser and formatter part
