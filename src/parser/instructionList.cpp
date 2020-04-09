@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 #include "parser.hpp"
+#include "../include/util.hpp"
+#include "../include/defs.hpp"
 
 std::map<std::string, uint32_t> regMap = {
     {"$zero", 0},
@@ -71,14 +73,6 @@ std::map<std::string, uint32_t> regMap = {
     {"$30", 30},
     {"$31", 31}};
 
-void exitError(std::string err, int line, int code)
-{
-    // std::cerr << errMsg << std::endl << std::endl;
-    // std::exit(code);
-    std::string errMsg = to_string(line) + " ----- " + err;
-    throw retException({code, errMsg});
-}
-
 std::string giveStr(std::vector<std::string> strVec)
 {
     std::string returnStr;
@@ -125,8 +119,10 @@ uint32_t R_TYPE(std::vector<std::string> &argVec, const std::vector<OP_TYPE> &op
         {
         case shAmt:
             int32_t shAmtNum;
-            if (!validIntStr(argVec[i + 1], shAmtNum))
+            if (!validIntStr(argVec[i + 1], shAmtNum, pc))
                 exitError("Invalid instruction argument \"" + giveStr(argVec) + "\"", pc + 1, 5);
+            if (shAmtNum != (shAmtNum & 0x1F))
+                exitError("Invalid shamt: \"" + to_string(shAmtNum) + "\".", pc + 1, 5);
             returnNum = returnNum | ((shAmtNum & 0x1F) << 6);
             break;
         case $d:
@@ -164,14 +160,16 @@ uint32_t I_TYPE(std::vector<std::string> &argVec, const std::vector<OP_TYPE> &op
         case imm:
             if (branch && labelReturn(argVec[i + 1], immediate))
             {
-                immediate = immediate - ((pc + 1) * 4 + 0x10000000);
+                immediate = immediate - ((pc + 1) * 4 + ADDR_INSTR);
                 immediate = immediate >> 2;
             }
             else
             {
-                if (!validIntStr(argVec[i + 1], immediate))
+                if (!validIntStr(argVec[i + 1], immediate, pc))
                     exitError("Invalid instruction argument \"" + giveStr(argVec) + "\"", pc + 1, 5);
             }
+            if (immediate != (immediate & 0xFFFF))
+                exitError("Immediate out of range: \"" + to_string(immediate) + "\"", pc + 1, 5);
             returnNum = returnNum | (immediate & 0xFFFF);
             break;
         case $t:
