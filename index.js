@@ -8,7 +8,7 @@ exports.stepCode = addon.stepCode;
 
 
 // try {
-//     const prog = ("ori $1, $0, 642134312431241325522");
+//     const prog = ("\n  \n    \t \n \n \n ori $1, $0, 642134312431241325522");
 //     const bin = exports.compile(prog);
 //     console.log('----')
 //     console.log(bin);
@@ -16,7 +16,7 @@ exports.stepCode = addon.stepCode;
 //     // const ri = exports.getPickledRunInfo(prog);
 //     // console.log(ri);
 //     // const res = exports.stepCode(ri, 1);
-//     // console.log(res);
+//     // console.log(res)
 // }
 // catch (err) {
 //     console.error(err.message);

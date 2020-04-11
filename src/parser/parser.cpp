@@ -214,7 +214,8 @@ void parseLines(std::istream &inStream, ParsedLines &commVector, const bool &for
     std::string func;
     while (getline(inStream, lineStr))
     {
-        parseLine(lineStr, commVector, lineNo, count, formatMode);
+        if (trim(lineStr).length())
+            parseLine(lineStr, commVector, lineNo, count, formatMode);
         ++lineNo;
     }
 }
@@ -262,7 +263,8 @@ std::vector<CompiledSimInput> compileForSimulator(ParsedLines &commVector)
         auto &x = commVector[i];
         if (!x.isComment)
         {
-            uint32_t instr = commMap[x.comm[0]].fn(x.comm, i);
+            // we pass in x.lineNo - 1 because oll16 set the errors to throw at pc+1, now in place of pc we pass in x.lineNo - 1
+            uint32_t instr = commMap[x.comm[0]].fn(x.comm, x.lineNo - 1);
 
             out.push_back({instr, x.lineNo});
         }
