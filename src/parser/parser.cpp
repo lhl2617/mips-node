@@ -263,8 +263,8 @@ std::vector<CompiledSimInput> compileForSimulator(ParsedLines &commVector)
         auto &x = commVector[i];
         if (!x.isComment)
         {
-            // we pass in x.lineNo - 1 because oll16 set the errors to throw at pc+1, now in place of pc we pass in x.lineNo - 1
-            uint32_t instr = commMap[x.comm[0]].fn(x.comm, x.lineNo - 1);
+            // we pass in x.lineNo because oll16 set the errors to throw at pc+1, now in place of pc we pass in x.lineNo
+            uint32_t instr = commMap[x.comm[0]].fn(x.comm, x.lineNo);
 
             out.push_back({instr, x.lineNo});
         }
