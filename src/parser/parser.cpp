@@ -228,7 +228,8 @@ std::vector<uint32_t> compileParsedLines(ParsedLines &commVector)
         auto &x = commVector[i];
         if (!x.isComment)
         {
-            uint32_t val = commMap[x.comm[0]].fn(x.comm, i);
+            // we pass in x.lineNo because oll16 set the errors to throw at pc+1, now in place of pc we pass in x.lineNo
+            uint32_t val = commMap[x.comm[0]].fn(x.comm, x.lineNo - 1);
             out.push_back(val);
         }
     }
