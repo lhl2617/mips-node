@@ -1,6 +1,6 @@
 {
   "name": "mips-node",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "MIPS-1 Emulator (C++) as NPM module",
   "main": "index.js",
   "scripts": {

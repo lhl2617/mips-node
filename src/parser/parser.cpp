@@ -209,7 +209,7 @@ void parseLine(
 void parseLines(std::istream &inStream, ParsedLines &commVector, const bool &formatMode)
 {
     unsigned int count = ADDR_INSTR;
-    unsigned int lineNo = 0;
+    unsigned int lineNo = 1;
     std::string lineStr;
     std::string func;
     while (getline(inStream, lineStr))
@@ -264,7 +264,7 @@ std::vector<CompiledSimInput> compileForSimulator(ParsedLines &commVector)
         if (!x.isComment)
         {
             // we pass in x.lineNo because oll16 set the errors to throw at pc+1, now in place of pc we pass in x.lineNo
-            uint32_t instr = commMap[x.comm[0]].fn(x.comm, x.lineNo);
+            uint32_t instr = commMap[x.comm[0]].fn(x.comm, x.lineNo - 1);
 
             out.push_back({instr, x.lineNo});
         }

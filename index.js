@@ -8,7 +8,7 @@ exports.stepCode = addon.stepCode;
 
 
 // try {
-//     const prog = ("\n  \n    \t \n \n \n ori $1, $0, 642134312431241325522");
+//     const prog = ("  add     $0,     $1,     $1      \n        ori     $1,     $0,     11232131232 \n  add     $0,     $1,     $1      \nadd     $1,     $1,     $1      ");
 //     const bin = exports.compile(prog);
 //     console.log('----')
 //     console.log(bin);
