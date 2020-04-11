@@ -72,6 +72,33 @@ Napi::Array NAPI_compile(const Napi::CallbackInfo &info)
     return ret;
 }
 
+Napi::String NAPI_intellisense(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    std::string input = (std::string)info[0].ToString();
+
+    try 
+    {
+        intellisense(input);
+    }
+    catch (retException &e)
+    {
+        /// this is what we want - we have error here!
+        return Napi::String::New(env, e.msg);
+    }
+    catch (RunErr &e)
+    {
+        /// should not happen!
+        throw Napi::Error::New(env, e.message);
+    }
+    catch (...)
+    {
+        throw Napi::Error::New(env, "Unknown error!");
+    }
+
+    return Napi::String::New(env, "");
+}
+
 Napi::String NAPI_getPickledRunInfo(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
@@ -201,6 +228,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports.Set(
         Napi::String::New(env, "compile"),
         Napi::Function::New(env, NAPI_compile));
+    exports.Set(
+        Napi::String::New(env, "intellisense"),
+        Napi::Function::New(env, NAPI_intellisense));
     exports.Set(
         Napi::String::New(env, "getPickledRunInfo"),
         Napi::Function::New(env, NAPI_getPickledRunInfo));

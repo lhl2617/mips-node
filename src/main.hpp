@@ -21,6 +21,9 @@ std::vector<std::string> format(const std::string &rawCode);
 /// entry: parse
 std::vector<uint32_t> compile(const std::string &rawCode);
 
+/// intellisense
+void intellisense(const std::string &rawCode);
+
 /// get initial runInfo string, performs checks too
 std::string getPickledRunInfo(const std::string &rawCode);
 
