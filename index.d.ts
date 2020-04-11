@@ -1,5 +1,8 @@
+import mipsnode = require('mips-node');
+
 declare function format(rawCode: string): string[];
 declare function compile(rawCode: string): number[];
+declare function intellisense(rawCode: string): string;
 declare function getPickledRunInfo(rawCode: string): string;
 declare function stepCode(pickledRunInfo: string, steps: number): 
     { pickledRunInfo: string; 

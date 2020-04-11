@@ -31,13 +31,14 @@ std::vector<uint32_t> compile(const std::string &rawCode)
     return compileParsedLines(ps);
 }
 
-// std::vector<CompiledSimInput> compileSim(const std::string &rawCode)
-// {
-//     auto stream = stringToStream(rawCode);
-//     ParsedLines ps;
-//     parseLines(stream, ps);
-//     return compileForSimulator(ps);
-// }
+/// entry: intellisense
+void intellisense(const std::string &rawCode)
+{
+    auto stream = stringToStream(rawCode);
+    ParsedLines ps;
+    parseLines(stream, ps, false);
+    compileParsedLines(ps); // compile it to let it run to exitError
+}
 
 std::string getPickledRunInfo(const std::string &rawCode)
 {
