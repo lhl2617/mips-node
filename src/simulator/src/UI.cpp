@@ -66,7 +66,7 @@ inline std::vector<std::pair<uint32_t, uint8_t>> getMemUI(const Memory &mem)
     for (auto &x : indices)
     {
         std::pair<uint32_t, uint8_t> p = make_pair(x, (uint8_t)mem.read_byte(x));
-        ret.push_back(p);
+        if (p.second) ret.push_back(p);
     }
     return ret;
 }

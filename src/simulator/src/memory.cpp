@@ -60,7 +60,7 @@ uint32_t Memory::read_word(const uint32_t &addr) const
     // Read from data memory
     else if (!(addr % 4) && addr >= ADDR_DATA && addr < ADDR_DATA + ADDR_DATA_LENGTH)
     {
-        uint32_t mem_idx = addr - ADDR_DATA;
+        uint32_t mem_idx = addr;
         return (getFromRWMemory(mem_idx + 3) | (getFromRWMemory(mem_idx + 2) << 8) | (getFromRWMemory(mem_idx + 1) << 16) | (getFromRWMemory(mem_idx) << 24));
     }
     // Read from instr memory
@@ -78,7 +78,7 @@ uint32_t Memory::read_word(const uint32_t &addr) const
     }
     else
     {
-        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
+        throwError(MEMORY_EXCEPTION, "Out of range; read_word Address tried: " + to_string(addr));
     }
 }
 
@@ -92,7 +92,7 @@ void Memory::write_word(const uint32_t &word, const uint32_t &addr)
     // Write to memory
     else if (addr >= ADDR_DATA && addr < ADDR_DATA + ADDR_DATA_LENGTH && !(addr % 4))
     {
-        uint32_t mem_idx = addr - ADDR_DATA;
+        uint32_t mem_idx = addr;
         rw_memory[mem_idx] = (word >> 24) & MASK_8_BIT;
         rw_memory[mem_idx + 1] = (word >> 16) & MASK_8_BIT;
         rw_memory[mem_idx + 2] = (word >> 8) & MASK_8_BIT;
@@ -100,7 +100,7 @@ void Memory::write_word(const uint32_t &word, const uint32_t &addr)
     }
     else
     {
-        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
+        throwError(MEMORY_EXCEPTION, "Out of range; write_word Address tried: " + to_string(addr));
     }
 }
 
@@ -126,13 +126,13 @@ uint32_t Memory::read_half_word(const uint32_t &addr) const
     // Read from memory
     else if (addr >= ADDR_DATA && addr < ADDR_DATA + ADDR_DATA_LENGTH && !(addr % 2))
     {
-        uint32_t mem_idx = addr - ADDR_DATA;
+        uint32_t mem_idx = addr;
         return (getFromRWMemory(mem_idx + 1)) | (getFromRWMemory(mem_idx) << 8);
     }
     // Read from data memory
     else if (!(addr % 2) && addr >= ADDR_DATA && addr < ADDR_DATA + ADDR_DATA_LENGTH)
     {
-        uint32_t mem_idx = addr - ADDR_DATA;
+        uint32_t mem_idx = addr;
         return (getFromRWMemory(mem_idx + 1)) | (getFromRWMemory(mem_idx) << 8);
     }
     // Read from instr memory
@@ -150,7 +150,7 @@ uint32_t Memory::read_half_word(const uint32_t &addr) const
     }
     else
     {
-        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
+        throwError(MEMORY_EXCEPTION, "Out of range; read_half_word Address tried: " + to_string(addr));
     }
 }
 
@@ -168,13 +168,13 @@ void Memory::write_half_word(const uint32_t &word, const uint32_t &addr)
     // Write to memory
     else if (addr >= ADDR_DATA && addr < ADDR_DATA + ADDR_DATA_LENGTH && !(addr % 2))
     {
-        uint32_t mem_idx = addr - ADDR_DATA;
+        uint32_t mem_idx = addr;
         rw_memory[mem_idx] = (word >> 8) & MASK_8_BIT;
         rw_memory[mem_idx + 1] = word & MASK_8_BIT;
     }
     else
     {
-        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
+        throwError(MEMORY_EXCEPTION, "Out of range; write_half_word Address tried: " + to_string(addr));
     }
 }
 
@@ -200,7 +200,7 @@ uint32_t Memory::read_byte(const uint32_t &addr) const
     // Read from data memory
     else if (addr >= ADDR_DATA && addr < ADDR_DATA + ADDR_DATA_LENGTH)
     {
-        uint32_t mem_idx = addr - ADDR_DATA;
+        uint32_t mem_idx = addr;
         return getFromRWMemory(mem_idx);
     }
     // Read from instr memory
@@ -218,7 +218,7 @@ uint32_t Memory::read_byte(const uint32_t &addr) const
     }
     else
     {
-        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
+        throwError(MEMORY_EXCEPTION, "Out of range; read_byte Address tried: " + to_string(addr));
     }
 }
 
@@ -237,12 +237,12 @@ void Memory::write_byte(const uint32_t &word, const uint32_t &addr)
     // Write to memory
     else if (addr >= ADDR_DATA && addr < ADDR_DATA + ADDR_DATA_LENGTH)
     {
-        uint32_t mem_idx = addr - ADDR_DATA;
+        uint32_t mem_idx = addr;
         rw_memory[mem_idx] = word & MASK_8_BIT;
     }
     else
     {
-        throwError(MEMORY_EXCEPTION, "Out of range; Address tried: " + to_string(addr));
+        throwError(MEMORY_EXCEPTION, "Out of range; write_byte Address tried: " + to_string(addr));
     }
 }
 

@@ -179,8 +179,9 @@ void Simulator::stepBwd()
 {
     if (stepsDone > 0)
     {
-        if (history.size())
+        if (history.size() && history.back().pc == pc - 4)
         {
+            debug << "using history" << std::endl;
             auto ret = history.back();
             history.pop_back();
             // only the front most has history, need to keep it that way.
@@ -207,7 +208,7 @@ void Simulator::stepBwd()
             {
                 while (stepsDone < target)
                 {
-                    debug << "stepf" << std::endl;
+                    // debug << "stepf" << std::endl;
                     stepFwd(target);
                 }
             }
