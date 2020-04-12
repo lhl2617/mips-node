@@ -130,7 +130,7 @@ Napi::String NAPI_getPickledRunInfo(const Napi::CallbackInfo &info)
 Napi::Object VSCodePayloadToObject(Napi::Env env, const VSCodePayload &v)
 {
     auto ret = Napi::Object::New(env);
-    ret.Set("highlightLineNo", v.highlightLineNo);
+    ret.Set("highlightLineNo", v.highlightLineNo + 1);
     ret.Set("highlightClassName", v.highlightClassName);
     ret.Set("notificationMsg", v.notificationMsg);
     ret.Set("notificationType", v.notificationType);
@@ -147,9 +147,17 @@ Napi::Object UIPayloadToObject(Napi::Env env, const UIPayload &u)
         regs.Set(x.first, x.second);
     ret.Set("regs", regs);
 
-    auto mem = Napi::Object::New(env);
-    for (auto &x : u.mem)
-        mem.Set(x.first, x.second);
+    auto mem = Napi::Array::New(env, u.mem.size());
+    for (int i = 0; i < u.mem.size(); ++i)
+    {
+        auto &memPair = u.mem[i];
+        auto pairArr = Napi::Array::New(env, 2);
+
+        int z = 0; // clear redline as 0 is special in NAPI
+        pairArr[z] = memPair.first;
+        pairArr[1] = memPair.second;
+        mem[i] = pairArr;
+    }
     ret.Set("mem", mem);
 
     ret.Set("stepsDone", u.stepsDone);

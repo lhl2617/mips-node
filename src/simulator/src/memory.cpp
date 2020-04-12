@@ -326,3 +326,14 @@ void Memory::reset()
     instr_memory.clear();
     instr_len = 0;
 }
+
+vector<uint8_t> Memory::getInstrMem() const
+{
+    return instr_memory;
+}
+
+void Memory::setInstrMem(const vector<uint8_t> &v)
+{
+    instr_memory = v;
+    instr_len = v.size() * 4;
+}

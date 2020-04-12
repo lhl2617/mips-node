@@ -30,6 +30,9 @@ struct RunInfo
     uint32_t stepsDone;
     list<RunInfo> history;
     vector<uint32_t> lineMap;
+    uint32_t branch_addr;
+    bool call_branch;
+    bool branch;
     RunErr runErr;
 
     std::string pickle()
@@ -58,6 +61,9 @@ struct RunInfo
         ar &stepsDone;
         ar &history;
         ar &lineMap;
+        ar &branch_addr;
+        ar &call_branch;
+        ar &branch;
         ar &runErr;
     }
 };
@@ -88,13 +94,12 @@ private:
     list<RunInfo> history;
     // this maps from PC-ADDR_INSTR to the line number
     vector<uint32_t> lineMap;
-    RunErr runErr;
-
-    uint32_t instr_idx; // idx of first byte of instruction in byte_inst
-    uint32_t curr_inst; // current instruction
     uint32_t branch_addr;
     bool call_branch = false; // for delayed branch
     bool branch = false;
+    RunErr runErr;
+
+    uint32_t curr_inst; // current instruction
 
     uint8_t opcode;
 

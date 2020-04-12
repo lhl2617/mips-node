@@ -40,6 +40,8 @@ public:
     
     void reset();
 
+    vector<uint8_t> getInstrMem() const;
+    void setInstrMem(const vector<uint8_t> &v);
 
 private:
     friend class boost::serialization::access;

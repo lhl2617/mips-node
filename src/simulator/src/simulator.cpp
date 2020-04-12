@@ -5,8 +5,8 @@
 
 using namespace std;
 
-// uint32_t SIMULATOR_HISTORY_MAX_LENGTH = 10;
-// uint32_t MAX_RUN_STEPS = 5000;
+uint32_t SIMULATOR_HISTORY_MAX_LENGTH = 10;
+uint32_t MAX_RUN_STEPS = 5000;
 
 void Simulator::stepCode(const int &steps)
 {
@@ -81,7 +81,7 @@ void Simulator::run_inst()
 void Simulator::updateHistory()
 {
     // make sure history length within bounds
-    if (history.size() == 10)
+    if (history.size() == SIMULATOR_HISTORY_MAX_LENGTH)
         history.pop_front();
 
     RunInfo noHistory = toRunInfo(false);
@@ -99,6 +99,9 @@ RunInfo Simulator::toRunInfo(const bool &keepHistory) const
         stepsDone,
         keepHistory ? history : std::list<RunInfo>(),
         lineMap,
+        branch_addr,
+        call_branch,
+        branch,
         runErr};
     return r;
 }
@@ -112,6 +115,9 @@ void Simulator::assignRunInfo(const RunInfo &ri)
     pc = ri.pc;
     stepsDone = ri.stepsDone;
     history = ri.history;
+    branch_addr = ri.branch_addr;
+    call_branch = ri.call_branch;
+    branch = ri.branch;
     lineMap = ri.lineMap;
 }
 
@@ -133,15 +139,17 @@ void Simulator::stepFwdBy(const uint32_t &steps)
 
 void Simulator::stepFwd(const uint32_t &target)
 {
+    // debug << "PC: " << pc << std::endl;
     if (pc == ADDR_NULL || runErr.error)
     {
-        // do nothing
+        /// do nothing
+        // debug << "PC is 0" << std::endl;
     }
     else
     {
         // save to history if within history length of target, if target known
         // if target == 0 then save history
-        if (!target || target - stepsDone < 10)
+        if (!target || target - stepsDone < SIMULATOR_HISTORY_MAX_LENGTH)
             updateHistory();
         ++stepsDone;
 
@@ -173,26 +181,39 @@ void Simulator::stepBwd()
     {
         if (history.size())
         {
-            auto ret = history.front();
-            history.pop_front();
+            auto ret = history.back();
+            history.pop_back();
             // only the front most has history, need to keep it that way.
             ret.history = history;
             assignRunInfo(ret);
         }
         else
         {
+            debug << "not using history" << std::endl;
             // we need to run code form reset until stepsDone - 1
             uint32_t target = stepsDone - 1;
+
+
+            // we need to restore instr_memory, instr_len and lineMap
+            auto lMap = lineMap;
+            auto iMem = memory.getInstrMem();
+
             reset();
+
+            lineMap = lMap;
+            memory.setInstrMem(iMem);
+
             try
             {
-                while (stepsDone <= target)
+                while (stepsDone < target)
                 {
+                    debug << "stepf" << std::endl;
                     stepFwd(target);
                 }
             }
             catch (RunErr &e)
             {
+                debug << e.message << std::endl;
                 runErr = e;
             }
         }
@@ -209,6 +230,9 @@ void Simulator::reset()
     stepsDone = 0;
     history.clear();
     lineMap.clear();
+    branch_addr = 0;
+    call_branch = false;
+    branch = false;
 
     RunErr r;
     runErr = r;

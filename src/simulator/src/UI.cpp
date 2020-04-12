@@ -20,7 +20,16 @@ inline std::pair<std::string, std::string> getVSCodeNotificationPair(const RunIn
 VSCodePayload toVSCodePayload(const RunInfo &ri)
 {
     auto notificationPair = getVSCodeNotificationPair(ri);
-    unsigned int lineNo = (ri.pc == ADDR_NULL) || (ri.pc < ADDR_INSTR) ? ri.lineMap.back() : ri.lineMap[ri.pc - ADDR_INSTR];
+
+    int reqdIdx = ((int)ri.pc - ADDR_INSTR - 4) / 4;
+
+
+    unsigned int lineNo;
+
+    if (reqdIdx >= 0 && reqdIdx < ri.lineMap.size() && reqdIdx < ADDR_INSTR_LENGTH)
+        lineNo = ri.lineMap[reqdIdx] - 1;
+    else
+        lineNo = ri.lineMap.back() - 1;
 
     VSCodePayload ret =
         {
@@ -28,7 +37,7 @@ VSCodePayload toVSCodePayload(const RunInfo &ri)
             "editor-line-highlight",
             notificationPair.first,
             notificationPair.second};
-            
+
     return ret;
 }
 
@@ -66,14 +75,14 @@ inline std::pair<std::string, std::string> getStatusBarPair(const RunInfo &ri)
 {
     if (ri.runErr.error)
     {
-        return make_pair(ri.runErr.header, std::string("negative"));
+        return make_pair(ri.runErr.header, std::string("btn-negative"));
     }
     switch (ri.pc)
     {
     case ADDR_NULL:
-        return make_pair(std::string("Execution Complete"), std::string("positive"));
+        return make_pair(std::string("Execution Complete"), std::string("btn-positive"));
     default:
-        return make_pair(std::string("Stepping"), std::string("primary"));
+        return make_pair(std::string("Stepping"), std::string("btn-primary"));
     }
     return make_pair(std::string("-"), std::string());
 }
