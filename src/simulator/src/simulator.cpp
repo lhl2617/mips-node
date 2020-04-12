@@ -6,7 +6,6 @@
 using namespace std;
 
 uint32_t SIMULATOR_HISTORY_MAX_LENGTH = 10;
-uint32_t MAX_RUN_STEPS = 5000;
 
 void Simulator::stepCode(const int &steps)
 {

@@ -124,7 +124,7 @@ private:
     uint32_t debugsrc1;
     uint32_t debugsrc2;
     // run from x steps from current stepsDone, if 0 run until pc == ADDR_NULL
-    void stepFwdBy(const uint32_t &steps = 5000);
+    void stepFwdBy(const uint32_t &steps);
     // step back
     void stepBwd();
     // step front - target is only used to optimise updateHistory
